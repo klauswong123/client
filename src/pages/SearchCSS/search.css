@@ -1,0 +1,17 @@
+.custab{
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin-top: 20%;
+    position: relative;
+    box-shadow: 3px 3px 2px #ccc;
+    transition: 0.5s;
+    width: 1000px !important;
+
+    }
+.custab:hover{
+    box-shadow: 3px 3px 0px transparent;
+    transition: 0.5s;
+    }
+.t1{
+  width: 100px;
+}
