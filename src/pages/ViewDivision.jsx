@@ -116,7 +116,7 @@ class ViewDivision extends Component {
         })
         .then(res => res.json())
             .then((result) => {
-              console.log(result.data);
+
           searchKey=result.data.product_branch;
         })
         this.setState({ isLoading: true })
@@ -154,7 +154,6 @@ class ViewDivision extends Component {
         var phone_numbers=[]
         var jobs=[]
         user.filter(function(item, index, array){
-            console.log( array[index].occupation);
             jobs.push(array[index].occupation)
             members.push(array[index].name)
             phone_numbers.push(array[index].phone_number)
@@ -167,7 +166,6 @@ class ViewDivision extends Component {
         for (const [index, value] of pictures.entries()) {
           items3.push(<NewBlock><img style={{ height:"180px",width: "70%"}} src={news} alt={index} key={index} /><br/></NewBlock>)
         }
-        console.log(this.state.member_number);
 
         return (
           <div>

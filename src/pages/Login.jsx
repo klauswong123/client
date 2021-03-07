@@ -4,6 +4,7 @@ import './LoginCSS/css/util.css';
 import styled from 'styled-components'
 import { setLoginSession, getSession } from '../app/CookieSession.js'
 import Cookies from 'js-cookie'
+import tempicon from './Logo.png'
 
 const ButtonLink= styled.button.attrs({
   className: 'buttonlink'
@@ -19,11 +20,28 @@ const ButtonLink= styled.button.attrs({
   cursor: pointer;
 `
 
+const Navb =  styled.a.attrs({
+  className: 'navb'
+})`
+    margin-top:10px;
+
+
+`
+
+const Icon1= styled.img.attrs({
+  className: 'icon1'
+})`
+    width:20%;
+    height:150%;
+    margin-top: -3%;
+    float:left;
+`
+
 export default class Login extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      auth_way :"phone",
+      auth_way :"email",
       phone_number : '',
       token: '',
       logined: false,
@@ -36,17 +54,16 @@ export default class Login extends Component {
 
   componentDidMount() {
     const isLogin = Cookies.get('isLogin')
-    console.log(isLogin);
         if (isLogin) {
-          console.log(isLogin)
           this.props.history.push('/')
         }
   }
 
-  handleCookie(token, phone_number){
+  handleCookie(token, phone_number,name){
     setLoginSession();
     Cookies.set('token', token)
     Cookies.set('phone_number', phone_number)
+    Cookies.set('name',name)
   }
 
   handleInputChange = (event) => {
@@ -72,7 +89,7 @@ export default class Login extends Component {
       phone_number:""
     });
   }
-    console.log(this.state)
+
     fetch('http://localhost:3000/api/authenticate', {
       method: 'POST',
       body: JSON.stringify(this.state),
@@ -82,12 +99,8 @@ export default class Login extends Component {
     })
     .then(res => res.json())
           .then((result) => {
-      console.log(result)
-      console.log(this.state.token);
-      console.log(this.state.return_token);
       if (result.status === 200 && this.state.token===this.state.return_token ) {
-        console.log(result.phone_number);
-        this.handleCookie(this.state.token,result.phone_number)
+        this.handleCookie(this.state.token,result.phone_number,result.name)
         this.props.history.push('/myinfo')
         window.location.reload(false);
       }
@@ -106,7 +119,6 @@ sendSMS = (event) => {
       phone_number: this.state.phone_number,
       ifTriger:true
     });
-    console.log(this.state)
     fetch('http://localhost:3000/api/sendSMS', {
       method: 'POST',
       body: JSON.stringify(this.state),
@@ -116,7 +128,6 @@ sendSMS = (event) => {
     })
     .then(res => res.json())
         .then((result) => {
-          console.log(result.token);
       this.setState({"return_token":result.token})
     })
     .catch(err => {
@@ -132,7 +143,6 @@ sendSMS = (event) => {
         email: this.state.email,
         ifTriger:true
       });
-      console.log(this.state)
       fetch('http://localhost:3000/api/sendEmail', {
         method: 'POST',
         body: JSON.stringify(this.state),
@@ -142,7 +152,6 @@ sendSMS = (event) => {
       })
       .then(res => res.json())
           .then((result) => {
-            console.log(result.token);
         this.setState({"return_token":result.token})
       })
       .catch(err => {
@@ -151,7 +160,11 @@ sendSMS = (event) => {
       });
     }
 
-
+    changeContent(value){
+      Cookies.set("current_page",value)
+      window.location.reload(false);
+    }
+    
     changeAuth(){
       if(this.state.auth_way==="phone"){
       this.setState({auth_way:"email"})
@@ -166,6 +179,18 @@ sendSMS = (event) => {
 
     return (
       	<div class="limiter">
+        <header id="header">
+          <div class="inner">
+            <nav id="nav">
+              <Icon1 class="logo" src={tempicon}/>
+              <Navb style={{color: "#000000"}} href="/" onClick={()=> this.changeContent("main")}>主頁</Navb>
+              <Navb style={{color: "#000000"}} href="/" onClick={()=> this.changeContent("intro")}>分會簡介</Navb>
+              <Navb style={{color: "#000000"}} href="/" onClick={()=> this.changeContent("contact")}>聯繫我們</Navb>
+              <Navb style={{color: "#000000"}} href="/login">登入</Navb>
+            </nav>
+            <a href="#navPanel" class="navPanelToggle"><span class="fa fa-bars"></span></a>
+          </div>
+        </header>
         <style type="text/css">
           {`.navbar {display: none}`}
         </style>

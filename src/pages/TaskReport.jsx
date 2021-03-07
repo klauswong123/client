@@ -184,7 +184,7 @@ class TaskReport extends Component {
           isLoading: false,
           invite_members_month:[],
           invite_members:[],
-          invite_this_month:0,
+          invite_this_month:[],
           }
       }
 
@@ -193,7 +193,7 @@ class TaskReport extends Component {
         let phone_number = Cookies.get('phone_number')
         let invite_members_month = []
         let invite_members = []
-        let invite_this_month = 0
+        let meinvite = []
         let user = {}
         let users = {}
         let tempuse = []
@@ -214,7 +214,6 @@ class TaskReport extends Component {
               for (const [index, value] of tempuse.entries()) {
               users[value.phone_number] = value
             }
-            console.log(users);
         })
 
         await fetch('http://localhost:3000/api/getmonthinvites', {
@@ -232,21 +231,24 @@ class TaskReport extends Component {
         .then(res => res.json())
             .then((result) => {
           if (result.data){
-            console.log(result.data);
+
             invite_members = result.data
           }
         })
 
-        await fetch('http://localhost:3000/api/getinvite?invite_person='+phone_number, {
+        await fetch('http://localhost:3000/api/getinvite/invite?invite_person='+phone_number, {
           method: "GET"
         })
         .then(res => res.json())
             .then((result) => {
           if (result.data){
-            invite_this_month = result.data.length
+            meinvite = result.data
+          }
+          else{
+            meinvite = []
           }
         })
-        this.setState({invite_members:invite_members, invite_members_month:invite_members_month, users:users,user:user,isLoading:true, invite_this_month:invite_this_month})
+        this.setState({invite_members:invite_members, invite_members_month:invite_members_month, users:users,user:user,isLoading:true, invite_this_month:meinvite})
     }
 
     countInArray(array, value) {
@@ -363,16 +365,19 @@ class TaskReport extends Component {
           items5.push(<img style={{width: "20%", margin:"5px"}} src={value} alt={index} key={index} />)
         }
 
-        const invite_member = this.state.user.invitated_people
-        const accept_member = this.state.user.accept_member
-        const invite_number = 0
-        const accept_number = 0
-        if (invite_member){
-          const invite_number = invite_member.length
+        const intviteList = this.state.invite_this_month
+        const date = new Date()
+        const invite_month = date.getMonth()+1
+        var accept_number =0
+        const invite_number_in_month = 0
+        for(const value of intviteList){
+          if (value.accepted){
+            accept_number = accept_number+1
+          }
+          if(value.invite_month===invite_month){
+            invite_number_in_month = invite_number_in_month+1
+          }
         }
-        if (accept_member){
-        const accept_number = accept_member.length
-      }
 
         return (
           <div>
@@ -384,7 +389,7 @@ class TaskReport extends Component {
                 <LeftIntroIcon src={tempicon} />
                 <LeftIntroInfo><p>名稱:  {this.state.user.name}<br />分會： {this.state.user.product_branch}<br />訂閲到期： <Moment date={this.state.user.subscription_due} format="YYYY/MM/DD" /></p></LeftIntroInfo>
               </div>
-                <LeftIntroInfoLower><p>本月推薦累計： {this.state.invite_this_month}人<br />連續推薦累計：{invite_number}人<br />接受推薦累計：{accept_number}人</p></LeftIntroInfoLower>
+                <LeftIntroInfoLower><p>本月推薦累計： {invite_number_in_month}人<br />連續推薦累計：{this.state.invite_this_month.length}人<br />接受推薦累計：{accept_number}人</p></LeftIntroInfoLower>
               </LeftIntroWrapper>
               <LeftRecomWrapper>
                 <LeftRecomContent><br /><p>我的專屬邀請碼：</p><Invitation_code><strong>{this.state.user.invitation_code}</strong></Invitation_code><p>請指示來賓申請時輸入邀請碼</p></LeftRecomContent>

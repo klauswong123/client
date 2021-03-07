@@ -9,4 +9,5 @@ import SearchResult from './searchResult'
 import Landing from './Landing'
 import ViewProfile from './ViewProfile'
 import ViewDivision from './ViewDivision'
-export { TaskReport, Friends, RecommandFD, MyInfo, Login, Logout, UserProfile, SearchResult, Landing,ViewProfile, ViewDivision }
+import ChatUI from './ChatUI'
+export { TaskReport, Friends, RecommandFD, MyInfo, Login, Logout, UserProfile, SearchResult, Landing,ViewProfile, ViewDivision,ChatUI }

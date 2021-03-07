@@ -179,7 +179,6 @@ class Friends extends Component {
         group_description: this.state.group_description,
         target: this.state.final_target,
       }
-      console.log(data);
       event.preventDefault();
       fetch('http://localhost:3000/api/group/update/'+this.state.group._id, {
         method: 'POST',
@@ -189,10 +188,8 @@ class Friends extends Component {
         }
       })
       .then(res => {
-        console.log(res)
         if (res.status === 200) {
           window.location.reload(false);
-          console.log("修改成功");
         } else {
           const error = new Error(res.error);
           throw error;
@@ -211,7 +208,6 @@ class Friends extends Component {
         var phone_numbers=[]
         var jobs=[]
         user.filter(function(item, index, array){
-            console.log( array[index].occupation);
             jobs.push(array[index].occupation)
             members.push(array[index].name)
             phone_numbers.push(array[index].phone_number)
@@ -224,7 +220,6 @@ class Friends extends Component {
         for (const [index, value] of pictures.entries()) {
           items3.push(<NewBlock><img style={{ height:"180px",width: "70%"}} src={news} alt={index} key={index} /><br/></NewBlock>)
         }
-        console.log(this.state.member_number);
 
         return (
           <div>

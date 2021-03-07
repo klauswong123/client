@@ -9,6 +9,7 @@ import Cookies from 'js-cookie'
 import './ProfileCSS/main.css';
 import Moment from 'react-moment';
 import moment from 'moment';
+import axios from 'axios';
 
 const OutsideContainer =  styled.div.attrs({
     className: 'container',
@@ -80,6 +81,33 @@ const Outside1 = styled.div.attrs({
 
 `
 
+const ForForm = styled.form.attrs({
+  className: 'form123',
+})`
+  margin-left:28%;
+  margin-top:1%;
+
+`
+
+const UpdateNews = styled.div.attrs({
+  className: 'UpdateNews'
+})`
+text-align: center;
+margin:2%;
+margin-left:20%;
+margin-right:20%;
+margin-bottom:15%;
+display:flex;
+`
+
+const NewBlock = styled.div.attrs({
+  className: 'newblock'
+})`
+    width:30px;
+    height:30px;
+    flex:1;
+`
+
 class MyInfo extends Component {
   constructor(props) {
       super(props)
@@ -95,21 +123,25 @@ class MyInfo extends Component {
           personal_description:'',
           ifChange: false,
           isLoading: false,
+          profileImg:'',
+          imglink:'',
       }
       this.trigerChange = this.trigerChange.bind(this);
       this.handleChange = this.handleChange.bind(this);
+      this.onSubmit = this.onSubmit.bind(this);
+      this.onFileChange = this.onFileChange.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
       Cookies.set('current_page','profile')
       let phone_number = Cookies.get('phone_number')
       this.setState({ isLoading: true })
-      fetch('http://localhost:3000/api/client?phone_number='+phone_number, {
+      await fetch('http://localhost:3000/api/client?phone_number='+phone_number, {
         method: "GET"
       })
       .then(res => res.json())
           .then((result) => {
-            console.log(result);
+            Cookies.set('name',result.data.name)
         this.setState( { user:result.data,
               name:result.data.name,
               email: result.data.email,
@@ -119,9 +151,10 @@ class MyInfo extends Component {
               personal_description:result.data.personal_description,
               company:result.data.company,
               product_branch: result.data.product_branch,
+              imglink:result.data.icon
             } );
       })
-
+      Cookies.set('logo',this.state.imglink)
   }
 
   trigerChange(e){
@@ -142,8 +175,35 @@ class MyInfo extends Component {
     });
   }
 
+  arrayBufferToBase64(buffer) {
+      var binary = '';
+      var bytes = [].slice.call(new Uint8Array(buffer));
+      bytes.forEach((b) => binary += String.fromCharCode(b));
+      return window.btoa(binary);
+  };
+
+
+    onFileChange(e) {
+        this.setState({ profileImg: e.target.files[0] })
+    }
+
+  onSubmit(e) {
+      e.preventDefault()
+      const formData = new FormData()
+      formData.append('profileImg', this.state.profileImg)
+      axios.post("http://localhost:3000/api/uploadIcon"+this.state.user._id, formData, {
+      }).then(res => {
+      })
+      window.location.reload(false);
+  }
+
+
   submieChange = (event) => {
+    event.preventDefault()
     this.setState({ ifchange:false })
+    const fs = require('fs');
+    var fd = new FormData()
+    fd.append('file',this.state.files)
     const data = {
       name:this.state.name,
       email: this.state.email,
@@ -152,9 +212,9 @@ class MyInfo extends Component {
       business_description:this.state.business_description,
       personal_description:this.state.personal_description,
       company:this.state.company,
-      product_branch: this.state.product_branch
+      product_branch: this.state.product_branch,
+      icon: fd,
     }
-    console.log(data);
     event.preventDefault();
     fetch('http://localhost:3000/api/updateinfo/'+this.state.user._id, {
       method: 'POST',
@@ -164,10 +224,8 @@ class MyInfo extends Component {
       }
     })
     .then(res => {
-      console.log(res)
       if (res.status === 200) {
-        window.location.reload(false);
-        console.log("success");
+        // window.location.reload(false);
       } else {
         const error = new Error(res.error);
         throw error;
@@ -175,22 +233,45 @@ class MyInfo extends Component {
     })
     .catch(err => {
       console.error(err);
-      alert('Error logging in please try again');
+      alert('資料更新失敗');
     });
+    window.location.reload(false);
   }
     render() {
-
+      const pictures = ['./1.png','./2.png','./3.png','./4.png']
+      const items3 = []
+      for (const [index, value] of pictures.entries()) {
+        items3.push(<NewBlock><img style={{ height:"180px",width: "70%"}} src={news} alt={index} key={index} /><br/></NewBlock>)
+      }
+      const logo = this.state.imglink
         return (
           <div>
+            { this.state.ifChange &&
+          <ForForm onSubmit={this.onSubmit}>
+                <div className="form-group" >
+                    <input type="file" onChange={this.onFileChange} />
+                </div>
+                <div className="form-group">
+                    <button className="btn " style={{'height':"100%",'background':'Grey'}} type="submit">Upload</button>
+                </div>
+            </ForForm>
+          }
           <form onSubmit={this.submieChange}>
           <OutsideContainer>
             <Icon>
-              <img src={share} alt="avatar" class="profile-pic" />
+              <img src={logo} alt="avatar" class="profile-pic" />
             </Icon>
-            <Intro><h5><strong>你好！我是 <Username>{this.state.user.name}</Username></strong></h5><p><br /><strong>性別： {this.state.user.gender}</strong><br/><strong>續期到期時間：<Moment date={this.state.user.subscription_due} format="YYYY/MM/DD" /></strong></p></Intro>
+            <Intro>
+            <h5><strong>你好！我是 <Username>{this.state.user.name}</Username></strong></h5>
+
+            <p><br />
+            <strong>性別： {this.state.user.gender}</strong><br/>
+            <strong>續期到期時間：<Moment date={this.state.user.subscription_due} format="YYYY/MM/DD" /></strong>
+            </p>
+            </Intro>
             <div class="col-md-2">
             { !this.state.ifChange ?
-                <input type="submit" style={{ textAlign:"center" }}  onClick={this.trigerChange}  name="edit" value="修改資料"/>
+                <input type="submit" style={{ textAlign:"center","float":"right" }}  onClick={this.trigerChange}  name="edit" value="修改資料"/>
                 :
                 <div>
                 <br/>
@@ -199,8 +280,10 @@ class MyInfo extends Component {
             }
             </div>
           </OutsideContainer>
+
           <hr size="8px" align="center" width="75%" style={{ margin: "auto"  }}></hr>
           <Outside1>
+
               <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                           <div class="row">
                               <div className="title-row">
@@ -254,11 +337,11 @@ class MyInfo extends Component {
                               </div>
                           </div>
                           <div class="row">
-                              <div className="title-row">
-                                  <label className="infoType"><strong>自我介紹</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;： </label>
-                              </div>
-                              <div className="content-row">
-                                  <label className="self-intro">{this.state.user.personal_description}</label>
+                          <div className="title-row">
+                              <label className="infoType"><strong>自我介紹</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;： </label>
+                          </div>
+                          <div className="content-row">
+                              <label className="self-intro">{this.state.user.personal_description}</label>
                                   { this.state.ifChange &&  <div className="self-intro"><input type="text" name="personal_description" value={this.state.personal_description} placeholder="自我介紹" onChange={this.handleChange}/>
                                                                                 <div class="row">
                                                                                     <div class="col-md-6">
@@ -271,6 +354,7 @@ class MyInfo extends Component {
                               </div>
                           </div>
               </div>
+              <br/>
           </Outside1>
           <hr size="8px" align="center" width="75%" style={{ margin: "auto"  }}></hr>
           <Outside1>
@@ -289,7 +373,11 @@ class MyInfo extends Component {
                                                                   </div>
                                                               </div></div> }
             </div>
+
           </OutsideContainer1>
+          <UpdateNews>
+            {items3}
+          </UpdateNews>
           </Outside1>
           </form>
           </div>

@@ -3,7 +3,7 @@ import { useTable } from 'react-table'
 import api from '../api'
 import styled from 'styled-components'
 import tempicon from './aic.png'
-import news from './1.png'
+import news from './2.jpg'
 import share from './chau.jpg'
 import Cookies from 'js-cookie'
 import './ProfileCSS/main.css';
@@ -80,6 +80,46 @@ const Outside1 = styled.div.attrs({
 
 `
 
+
+const UpdateNews = styled.div.attrs({
+  className: 'UpdateNews'
+})`
+    text-align: center;
+    margin:2%;
+    margin-left:20%;
+    margin-right:20%;
+    margin-bottom:15%;
+    display:flex;
+`
+
+const NewBlock = styled.div.attrs({
+  className: 'newblock'
+})`
+    width:30px;
+    height:30px;
+    flex:1;
+`
+
+function updateInvite(data){
+  return fetch('http://localhost:3000/api/inviteupdate/create', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+}
+
+function postText(data){
+  return fetch('http://localhost:3000/api/chat/create', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+}
+
 class ViewProfile extends Component {
   constructor(props) {
       super(props)
@@ -96,7 +136,9 @@ class ViewProfile extends Component {
           ifChange: false,
           isLoading: false,
       }
+      this.trigerChange = this.trigerChange.bind(this)
   }
+
 
   componentDidMount() {
       Cookies.set('current_page','profile')
@@ -107,7 +149,6 @@ class ViewProfile extends Component {
       })
       .then(res => res.json())
           .then((result) => {
-            console.log(result);
         this.setState( { user:result.data,
               name:result.data.name,
               email: result.data.email,
@@ -121,7 +162,39 @@ class ViewProfile extends Component {
       })
   }
 
+trigerChange(){
+  let sender = Cookies.get('name')
+  let sender_phone = Cookies.get('phone_number')
+  let receiver = this.state.name
+  let receiver_phone = this.state.phone_number
+  let text = "你好"
+  const data ={
+    invite_person:sender_phone,
+    invite_news:[
+      sender,
+      receiver
+    ],
+    invited_person:receiver_phone,
+  }
+  updateInvite(data)
+  const data1 = {
+    sender:sender,
+    sender_phone:sender_phone,
+    receiver:receiver,
+    receiver_phone:receiver_phone,
+    raw_text:"你好",
+  }
+  postText(data1)
+  this.props.history.push('/chatroom/'+receiver_phone)
+}
+
     render() {
+      const pictures = ['./1.png','./2.png','./3.png','./4.png']
+      const items3 = []
+      const myphone = Cookies.get("phone_number")
+      for (const [index, value] of pictures.entries()) {
+        items3.push(<NewBlock><img style={{ height:"180px",width: "70%"}} src={news} alt={index} key={index} /><br/></NewBlock>)
+      }
         return (
           <div>
           <OutsideContainer>
@@ -129,6 +202,14 @@ class ViewProfile extends Component {
               <img src={share} alt="avatar" class="profile-pic" />
             </Icon>
             <Intro><h5><strong>你好！我是 <Username>{this.state.user.name}</Username></strong></h5><p><br /><strong>性別： {this.state.user.gender}</strong><br/><strong>續期到期時間：<Moment date={this.state.user.subscription_due} format="YYYY/MM/DD" /></strong></p></Intro>
+            { myphone==this.state.phone_number ?
+              <div>
+              </div>
+              :
+            <div class="col-md-2">
+              <input type="submit" style={{ textAlign:"center" }}  onClick={this.trigerChange}  name="edit" value="進行對話"/>
+            </div>
+          }
           </OutsideContainer>
           <hr size="8px" align="center" width="75%" style={{ margin: "auto"  }}></hr>
           <Outside1>
@@ -166,6 +247,7 @@ class ViewProfile extends Component {
                               </div>
                           </div>
               </div>
+              <br/>
           </Outside1>
           <hr size="8px" align="center" width="75%" style={{ margin: "auto"  }}></hr>
           <Outside1>
@@ -175,7 +257,11 @@ class ViewProfile extends Component {
             <div>
                 <label className="business-intro">{this.state.user.business_description}</label>
             </div>
+
           </OutsideContainer1>
+          <UpdateNews>
+            {items3}
+          </UpdateNews>
           </Outside1>
           </div>
         )

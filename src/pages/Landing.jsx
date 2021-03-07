@@ -3,7 +3,7 @@ import './LandingCSS/assets/css/main.css';
 import './LandingCSS/assets/css/font-awesome.min.css';
 import { setLoginSession, getSession } from '../app/CookieSession.js'
 import Cookies from 'js-cookie'
-import tempicon from './Logo.jpg'
+import tempicon from './Logo.png'
 import styled from 'styled-components'
 
 const BrandName = styled.a.attrs({
@@ -80,6 +80,23 @@ const Core1= styled.div.attrs({
     margin-right:"20%";
 
 `
+
+const Navb =  styled.a.attrs({
+  className: 'navb'
+})`
+    margin-top:10px;
+
+`
+
+const Icon1= styled.img.attrs({
+  className: 'icon1'
+})`
+    width:20%;
+    height:150%;
+    margin-top: -3%;
+    float:left;
+`
+
 export default class Landing extends Component {
   constructor(props) {
     super(props)
@@ -87,21 +104,21 @@ export default class Landing extends Component {
       email : '',
       username: '',
       logined: false,
+      current_page:""
     };
     this.handleCookie = this.handleCookie.bind(this);
   }
 
-  // componentDidMount() {
-  //   const isLogin = Cookies.get('isLogin')
-  //   console.log(isLogin);
-  //       if (isLogin) {
-  //         console.log(isLogin)
-  //         this.props.history.push('/')
-  //       }
-  //       else{
-  //         console.log("Please Log In");
-  //       }
-  // }
+  componentDidMount() {
+    const temp = Cookies.get("current_page")
+    console.log(temp);
+    if (temp){
+      this.setState({current_page:temp})
+    }
+    else{
+      this.setState({current_page:"main"})
+    }
+  }
 
   handleCookie(email){
     setLoginSession();
@@ -145,42 +162,47 @@ export default class Landing extends Component {
     });
   }
 
+  changeContent(value){
+    Cookies.set("current_page",value)
+    window.location.reload(false);
+  }
+
   render() {
+    const showContent=[]
+    if(this.state.current_page === "main"){
+      showContent.push(<div class="inner"><header><h1>AI Circle</h1></header><div class="flex "><div><p>目標成爲以香港為基地，最成功的人工智能業務引薦組織及互聯消費網</p></div></div></div>)
+    }
+    else if(this.state.current_page === "intro"){
+      showContent.push(<div class="inner"><header><h1>分會簡介</h1></header><div class="flex "><div><p>用戶可以通過分會認識更多的人</p></div></div></div>)
+    }
+    else if(this.state.current_page === "contact"){
+      showContent.push(<div class="inner"><header><h1>聯繫我們</h1></header><div class="flex "><div><p>電話： 123456<br/>電郵: abc@gmail.com</p></div></div></div>)
+    }
+    console.log(this.state.current_page);
+    console.log(showContent[0]);
+
+
     return (
       <div>
       <header id="header">
         <div class="inner">
-
-        <img class="logo" src={tempicon} style={{  width:"20%", height:"100%"}}/>
           <nav id="nav">
-            <a href="index.html">主頁</a>
-            <a href="generic.html">分會簡介</a>
-            <a href="index.html">聯繫我們</a>
-            <a href="/login">登入</a>
+            <Icon1 class="logo" src={tempicon}/>
+            <Navb href="/" onClick={()=> this.changeContent("main")}>主頁</Navb>
+            <Navb href="/" onClick={()=> this.changeContent("intro")}>分會簡介</Navb>
+            <Navb href="/" onClick={()=> this.changeContent("contact")}>聯繫我們</Navb>
+            <Navb href="/login">登入</Navb>
           </nav>
           <a href="#navPanel" class="navPanelToggle"><span class="fa fa-bars"></span></a>
         </div>
       </header>
       <section id="banner">
-        <div class="inner">
-          <header>
-            <h1>AI Circle</h1>
-          </header>
-
-          <div class="flex ">
-
-            <div>
-              <p>目標成爲以香港為基地，最成功的人工智能業務引薦組織及互聯消費網</p>
-            </div>
-
-          </div>
-        </div>
+        {showContent[0]}
       </section>
 
       <section id="three" class="wrapper align-center">
         <div class="inner">
-                        <h3>AIC 5個核心元素</h3>
-                        <p>付出者收穫不論在實體世界或者虛擬世界都是相通的</p>
+        <h3>AIC 5個核心元素</h3><p>付出者收穫不論在實體世界或者虛擬世界都是相通的</p>
           <div style={{display:"flex"}}>
           <Core>
             <article>
@@ -206,28 +228,24 @@ export default class Landing extends Component {
             <div style={{flex:5}}>
             <div style={{display:"flex"}}>
             <Core1>
-              <img src={tempicon} style={{ margin:"5px", width:"150px", height:"80px", float:"left"}}/>
+              <img src='./landing/1.jpeg' style={{ margin:"5px", width:"150px", height:"150px", float:"left"}}/>
             </Core1>
             <Core1>
-              <img src={tempicon} style={{ margin:"5px", width:"150px", height:"80px", float:"left"}}/>
+              <img src='./landing/2.png' style={{ margin:"10px", width:"150px", height:"150px", float:"left"}}/>
+            </Core1>
+            <Core1>
+              <img src='./landing/3.jpeg' style={{ margin:"25px", width:"150px", height:"150px", float:"left"}}/>
             </Core1>
             </div>
             <div style={{display:"flex"}}>
             <Core1>
-              <img src={tempicon} style={{ margin:"5px", width:"150px", height:"80px", float:"left"}}/>
+              <img src='./landing/4.jpeg' style={{ margin:"25px", width:"150px", height:"150px", float:"left"}}/>
             </Core1>
             <Core1>
-              <img src={tempicon} style={{ margin:"5px", width:"150px", height:"80px", float:"left"}}/>
+              <img src='./landing/5.jpeg' style={{ margin:"25px", width:"150px", height:"150px", float:"left"}}/>
             </Core1>
             </div>
-            <div style={{display:"flex"}}>
-            <Core1>
-              <img src={tempicon} style={{ margin:"5px", width:"150px", height:"80px", float:"left"}}/>
-            </Core1>
-            <Core1>
-              <img src={tempicon} style={{ margin:"5px", width:"150px", height:"80px", float:"left"}}/>
-            </Core1>
-            </div>
+
             </div>
           </div>
         </div>

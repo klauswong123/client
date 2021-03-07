@@ -76,10 +76,9 @@ class SearchResult extends Component {
 
     componentDidMount() {
         Cookies.set('current_page','')
-        let searchKey = Cookies.get('searchKey')
         let searchType = Cookies.get('searchType')
+        let searchKey = this.props.match.params.searchKey
         let phone_number = Cookies.get('phone_number')
-        console.log(searchKey);
         this.setState({ isLoading: true })
         fetch('http://localhost:3000/api/clients', {
           method: 'POST',
@@ -90,7 +89,6 @@ class SearchResult extends Component {
         })
         .then(res => res.json())
             .then((result) => {
-          console.log(result.data)
           this.setState( { user:result.data } )
         })
     }

@@ -68,7 +68,6 @@ export default class UserProfile extends Component {
       business_description:this.state.business_description,
       personal_description:this.state.personal_description,
     }
-    console.log(data);
     event.preventDefault();
     fetch('http://localhost:3000/api/updateinfo/'+this.state.user._id, {
       method: 'POST',
@@ -78,10 +77,8 @@ export default class UserProfile extends Component {
       }
     })
     .then(res => {
-      console.log(res)
       if (res.status === 200) {
         window.location.reload(false);
-        console.log("success");
       } else {
         const error = new Error(res.error);
         throw error;
@@ -217,11 +214,11 @@ export default class UserProfile extends Component {
                                                   </div>
                                               </div>
                                               <div class="row">
-                                                  <div class="col-md-6">
-                                                      <label>自我介紹: </label>
+                                                  <div className="title-row">
+                                                      <label className="infoType"><strong>自我介紹</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;： </label>
                                                   </div>
-                                                  <div class="col-md-6">
-                                                      <p>{this.state.user.personal_description}</p>
+                                                  <div className="content-row">
+                                                      <label className="self-intro">{this.state.user.personal_description}</label>
                                                       { this.state.ifChange &&  <div><input type="text" name="personal_description" value={this.state.personal_description} placeholder="自我介紹" onChange={this.handleChange}/>
                                                                                                     <div class="row">
                                                                                                         <div class="col-md-6">

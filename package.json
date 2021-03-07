@@ -10,12 +10,16 @@
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
+    "dotenv": "^8.2.0",
+    "ejs": "^3.1.6",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
+    "multer": "^1.4.2",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.3",
     "react-dom": "^17.0.1",
+    "react-helmet": "^6.1.0",
     "react-messenger-customer-chat": "^0.8.0",
     "react-moment": "^1.1.1",
     "react-router-dom": "^5.2.0",
@@ -26,7 +30,7 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "PORT=8000 react-scripts start",
+    "start": "set PORT=8000 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

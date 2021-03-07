@@ -13,7 +13,7 @@ import logOut from '../app/CookieSession'
 import { withRouter } from 'react-router-dom';
 import Cookies from 'js-cookie'
 import './nav.css';
-import tempicon from '../pages/Logo.jpg'
+import tempicon from '../pages/Logo.png'
 
 const Outside2 = styled.div.attrs({
     className: 'container3',
@@ -24,8 +24,8 @@ const Outside2 = styled.div.attrs({
 const BrandLogo = styled.img.attrs({
     className: 'BrandLogo',
 })`
-  width:140px;
-  height:40px;
+  width:100px;
+  height:55px;
 `
 
 class NavBar extends Component {
@@ -62,14 +62,15 @@ class NavBar extends Component {
     Cookies.set('searchKey', this.state.searchKey)
     if (this.state.searchKey) {
     this.props.history.push({
-      pathname: "/searchResult?="+this.state.searchKey,
+      pathname: "/searchResult/:"+this.state.searchKey,
       state: {
         searchKey: this.state.searchKey
     }
   });
 } else {
-  alert("Please enter some search text!");
+  alert("請輸入搜索關鍵字");
 }
+window.location.reload(false);
 };
     render() {
       const phone_number = Cookies.get('phone_number')
@@ -80,8 +81,8 @@ class NavBar extends Component {
             <Navbar.Brand href="/"><BrandLogo src={tempicon}/></Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-            <Form inline>
-              <FormControl type="text" placeholder="Search" className="mr-sm-2" name="searchKey"  value={this.state.searchKey } onChange={this.handleInputChange} required/>
+            <Form inline onSubmit={this.handleSearch.bind(this)}>
+              <FormControl type="text" placeholder="Search" className="mr-sm-2"   value={this.state.searchKey } onChange={this.handleInputChange} required/>
               <Nav.Link type="submit" className="searchButton" onClick={this.handleSearch.bind(this)} variant="outline-success ">搜索</Nav.Link>
             </Form>
             <span>&nbsp;&nbsp;&nbsp;</span>
@@ -105,6 +106,11 @@ class NavBar extends Component {
                 <Nav.Link className="active button_bottom_line" href="/myinfo">個人履歷</Nav.Link>
                 :
                 <Nav.Link href="/myinfo">個人履歷</Nav.Link>
+              }
+              { Cookies.get('current_page')==='chatroom' ?
+                <Nav.Link className="active button_bottom_line" href="/chatroom">聊天室</Nav.Link>
+                :
+                <Nav.Link href="/chatroom/none">聊天室</Nav.Link>
               }
               </Nav>
               <Navbar.Text>

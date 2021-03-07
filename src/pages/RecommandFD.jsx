@@ -9,6 +9,8 @@ import Cookies from 'js-cookie'
 import fbicon from './facebookicon.png'
 import wcicon from './wechaticon.png'
 import wtsicon from './whatsappicon.png'
+import Moment from 'react-moment';
+import moment from 'moment';
 
 const OutsideContainer = styled.div.attrs({
     className: 'container',
@@ -29,8 +31,7 @@ flex:4;
 const RightMainFragment = styled.div.attrs({
   className: 'rightmain',
 })`
-float: left;
-flex:1;
+flex:2;
 margin-left:30px;
 `
 
@@ -136,7 +137,8 @@ const Divideline1 = styled.div.attrs({
   border:1px solid;
   float:left;
   color:#A9A9A9;
-  background-color:#A9A9A9
+  background-color:#A9A9A9;
+  margin-left:8%;
   border-color: #A9A9A9;
     height:435px;
 `
@@ -162,6 +164,8 @@ const InoneLine =  styled.div.attrs({
 })`
     overflow: hidden;
     white-space: nowrap;
+    display:flex;
+    width:120%;
 `
 class RecommandFD extends Component {
   constructor(props) {
@@ -248,29 +252,32 @@ class RecommandFD extends Component {
         const members = this.state.Meinvite_person
         const items1 = []
         for (const [index, value] of members.entries()) {
-          items1.push(<div><a style={{color:"DarkOrchid",fontSize:"15px",}} href={"viewprofile/"+value['invite_person']}>{value['invite_news'][0]}</a>&nbsp;推薦了&nbsp;<a style={{color:"DarkOrchid",fontSize:"15px",}} href={"viewprofile/"+value['invited_person']}>{value['invite_news'][1]}</a></div>)
+          items1.push(<div style={{"display":"flex"}}><div style={{"flex":"4"}}><a style={{color:"DarkOrchid",fontSize:"15px",}} href={"viewprofile/"+value['invite_person']}>{value['invite_news'][0]}</a>&nbsp;推薦了&nbsp;<a style={{color:"DarkOrchid",fontSize:"15px",}} href={"viewprofile/"+value['invited_person']}>{value['invite_news'][1]}</a></div><div style={{"flex":"2"}}><Moment style={{"float":"right","color":"#808080"}} date={value['invite_date']} format="YYYY/MM/DD" /></div></div>)
         }
         const members1 = this.state.Whoinvite_person
         const items2 = []
         for (const [index, value] of members1.entries()) {
-          items2.push(<div><a style={{color:"DarkOrchid",fontSize:"15px",}} href={"viewprofile/"+value['invite_person']}>{value['invite_news'][0]}</a>&nbsp;推薦了&nbsp;<a style={{color:"DarkOrchid",fontSize:"15px",}} href={"viewprofile/"+value['invited_person']}>{value['invite_news'][1]}</a></div>)
+          items2.push(<div style={{"display":"flex"}}><div style={{"flex":"4"}}><a style={{color:"DarkOrchid",fontSize:"15px",}} href={"viewprofile/"+value['invite_person']}>{value['invite_news'][0]}</a>&nbsp;推薦了&nbsp;<a style={{color:"DarkOrchid",fontSize:"15px",}} href={"viewprofile/"+value['invited_person']}>{value['invite_news'][1]}</a></div><div style={{"flex":"2"}}><Moment style={{"float":"right","color":"#808080"}} date={value['invite_date']} format="YYYY/MM/DD" /></div></div>)
         }
         const members2 = this.state.newinvite_new
         const items3 = []
         for (const [index, value] of members2.entries()) {
-          items3.push(<InoneLine><a style={{color:"DarkOrchid",fontSize:"15px" }} href={"viewprofile/"+value['invite_person']}>{value['invite_news'][0]}</a>&nbsp;推薦了&nbsp;<a style={{color:"DarkOrchid",fontSize:"15px",}} href={"viewprofile/"+value['invited_person']}>{value['invite_news'][1]}</a></InoneLine>)
+          items3.push(<InoneLine><div style={{"flex":"4"}}><a style={{color:"DarkOrchid",fontSize:"15px" }} href={"viewprofile/"+value['invite_person']}>{value['invite_news'][0]}</a>&nbsp;推薦了&nbsp;<a style={{color:"DarkOrchid",fontSize:"15px",}} href={"viewprofile/"+value['invited_person']}>{value['invite_news'][1]}</a></div><div style={{"flex":"2"}}>&nbsp;&nbsp;&nbsp;<Moment style={{"float":"right","color":"#808080"}} date={value['invite_date']} format="YYYY/MM/DD" /></div></InoneLine>)
         }
         const name = ''
-        const invite_member = this.state.user.invitated_people
-        const accept_member = this.state.user.accept_member
+        const intviteList = this.state.Meinvite_person
+        var accept_number = 0
+        console.log(intviteList);
+        for(const value of intviteList){
+          if (value.accepted){
+            accept_number = accept_number+1
+          }
+        }
+        const invite_member = this.state.Meinvite_person.length
         const invite_number = 0
-        const accept_number = 0
         if (invite_member){
           const invite_number = invite_member.length
         }
-        if (accept_member){
-        const accept_number = accept_member.length
-      }
 
         return (
           <div>
@@ -278,7 +285,7 @@ class RecommandFD extends Component {
             <LeftMainFragment>
               <div style={{display:"flex"}} className="recommandinfo">
               <LeftRecomWrapper>
-                <LeftRecomContent><p><strong>連續推薦累計</strong></p><p><strong>{invite_number} 人</strong></p></LeftRecomContent>
+                <LeftRecomContent><p><strong>連續推薦累計</strong></p><p><strong>{invite_member} 人</strong></p></LeftRecomContent>
               </LeftRecomWrapper>
               <LeftRecomWrapper>
                 <LeftRecomContent><p><strong>本月推薦累計</strong></p><p><strong>{this.state.invite_this_month} 人</strong></p></LeftRecomContent>
